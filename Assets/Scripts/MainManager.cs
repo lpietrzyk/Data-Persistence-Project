@@ -3,14 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System.IO;
 
 public class MainManager : MonoBehaviour
 {
-    public Brick BrickPrefab;
+   
+    public  Brick BrickPrefab;
     public int LineCount = 6;
-    public Rigidbody Ball;
+    public  Rigidbody Ball;
 
     public Text ScoreText;
+    public Text BestScoreText;
     public GameObject GameOverText;
     
     private bool m_Started = false;
@@ -18,26 +21,31 @@ public class MainManager : MonoBehaviour
     
     private bool m_GameOver = false;
 
-    
+   
     // Start is called before the first frame update
     void Start()
-    {
-        const float step = 0.6f;
-        int perLine = Mathf.FloorToInt(4.0f / step);
+    {  
+     
+            BestScoreText.text = "BEST SCORE : " + MenuManager.Instance.BestPlayer.ToString() + " : " + MenuManager.Instance.PlayerScore.ToString();
         
-        int[] pointCountArray = new [] {1,1,2,2,5,5};
-        for (int i = 0; i < LineCount; ++i)
-        {
-            for (int x = 0; x < perLine; ++x)
+            const float step = 0.6f;
+            int perLine = Mathf.FloorToInt(4.0f / step);
+
+            int[] pointCountArray = new[] { 1, 1, 2, 2, 5, 5 };
+            for (int i = 0; i < LineCount; ++i)
             {
-                Vector3 position = new Vector3(-1.5f + step * x, 2.5f + i * 0.3f, 0);
-                var brick = Instantiate(BrickPrefab, position, Quaternion.identity);
-                brick.PointValue = pointCountArray[i];
-                brick.onDestroyed.AddListener(AddPoint);
+                for (int x = 0; x < perLine; ++x)
+                {
+                    Vector3 position = new Vector3(-1.5f + step * x, 2.5f + i * 0.3f, 0);
+                    var brick = Instantiate(BrickPrefab, position, Quaternion.identity);
+                    brick.PointValue = pointCountArray[i];
+                    brick.onDestroyed.AddListener(AddPoint);
+                }
             }
-        }
+               
     }
 
+   
     private void Update()
     {
         if (!m_Started)
@@ -72,5 +80,12 @@ public class MainManager : MonoBehaviour
     {
         m_GameOver = true;
         GameOverText.SetActive(true);
+        
+        if (MenuManager.Instance.PlayerScore < m_Points)
+        {
+            MenuManager.Instance.BestPlayer = MenuManager.Instance.PlayerName;
+            MenuManager.Instance.PlayerScore = m_Points;
+            MenuManager.Instance.SaveBest();
+        }
     }
 }
