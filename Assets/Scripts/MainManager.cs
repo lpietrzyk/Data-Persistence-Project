@@ -24,10 +24,15 @@ public class MainManager : MonoBehaviour
    
     // Start is called before the first frame update
     void Start()
-    {  
-     
+    {
+        if (MenuManager.Instance.PlayerScore != 0)
+        {
             BestScoreText.text = "BEST SCORE : " + MenuManager.Instance.BestPlayer.ToString() + " : " + MenuManager.Instance.PlayerScore.ToString();
-        
+        }
+        else
+        {
+            BestScoreText.text = "";
+        }
             const float step = 0.6f;
             int perLine = Mathf.FloorToInt(4.0f / step);
 
@@ -66,6 +71,11 @@ public class MainManager : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            }
+
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                SceneManager.LoadScene(0);
             }
         }
     }
